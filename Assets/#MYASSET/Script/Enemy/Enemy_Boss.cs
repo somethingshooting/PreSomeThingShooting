@@ -6,7 +6,7 @@ using Sirenix.OdinInspector;
 using UniRx;
 using UniRx.Triggers;
 
-public class Enemy_Stay : EnemyBase
+public class Enemy_Boss : EnemyBase, IEnemyBoss
 {
     [SerializeField]
     private float _ShotInterval = 1;
@@ -21,6 +21,15 @@ public class Enemy_Stay : EnemyBase
         Observable.Interval(TimeSpan.FromSeconds(_ShotInterval))
             .Subscribe(_ => Shoot())
             .AddTo(gameObject);
+
+        this.UpdateAsObservable()
+            .Subscribe(_ => Move())
+            .AddTo(gameObject);
+    }
+
+    private void Move()
+    {
+        transform.Translate(Vector3.back * Time.deltaTime * MoveSpeed.Value);
     }
 
     private void Shoot()
@@ -33,7 +42,14 @@ public class Enemy_Stay : EnemyBase
 
     protected override void OnDead()
     {
-        GameObject.FindWithTag("GameManager").GetComponent<GameManager>().AddScore(_Score);
-        Destroy(gameObject);
+        var gameManager = GameObject.FindWithTag("GameManager").GetComponent<GameManager>();
+        gameManager.AddScore(_Score);
+        Clear();
+    }
+
+    public void Clear()
+    {
+        var gameManager = GameObject.FindWithTag("GameManager").GetComponent<GameManager>();
+        gameManager.ChangeScene(SceneType.Result);
     }
 }

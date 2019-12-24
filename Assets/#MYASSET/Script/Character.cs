@@ -36,7 +36,14 @@ public abstract class Character : SerializedMonoBehaviour
 
     public void ApplyDamage(int value)
     {
-        _CurrentHealth.Value -= value;
+        if (_CurrentHealth.Value - value < 0)
+        {
+            _CurrentHealth.Value = 0;
+        }
+        else
+        {
+            _CurrentHealth.Value -= value;
+        }
     }
 
     protected abstract void Init();
