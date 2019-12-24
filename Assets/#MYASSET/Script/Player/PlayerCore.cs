@@ -18,5 +18,13 @@ public class PlayerCore : Character
     protected override void OnDead()
     {
         _PlayerAnimator.SetBool("Dead", true);
+        StartCoroutine(ToResult());
+    }
+
+    private IEnumerator ToResult()
+    {
+        yield return new WaitForSeconds(4);
+        var gameManager = GameObject.FindWithTag("GameManager").GetComponent<GameManager>();
+        gameManager.ChangeScene(SceneType.Result);
     }
 }

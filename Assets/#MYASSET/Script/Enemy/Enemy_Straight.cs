@@ -6,7 +6,7 @@ using Sirenix.OdinInspector;
 using UniRx;
 using UniRx.Triggers;
 
-public class Enemy_Stay : EnemyBase
+public class Enemy_Straight : EnemyBase
 {
     [SerializeField]
     private float _ShotInterval = 1;
@@ -21,6 +21,15 @@ public class Enemy_Stay : EnemyBase
         Observable.Interval(TimeSpan.FromSeconds(_ShotInterval))
             .Subscribe(_ => Shoot())
             .AddTo(gameObject);
+
+        this.UpdateAsObservable()
+            .Subscribe(_ => Move())
+            .AddTo(gameObject);
+    }
+
+    private void Move()
+    {
+        transform.Translate(Vector3.back * Time.deltaTime * MoveSpeed.Value);
     }
 
     private void Shoot()
